@@ -1,5 +1,4 @@
-export interface Recommendation {
-    id: number;
+export interface Recommendation  {
     name: string;
     youtubeLink: string;
     score: number;

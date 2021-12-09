@@ -1,7 +1,18 @@
 import connection from "../database";
 import { Recommendation } from "../protocols/Recommendation";
+import { QueryResult } from 'pg';
 
-export async function create(name: string, youtubeLink: string, score: number) {
+export interface RecommendationDB extends Recommendation {
+  id: number;
+}
+
+export async function create(recommendation: Recommendation) {
+  const {
+    name,
+    youtubeLink,
+    score,
+  } = recommendation;
+
   await connection.query(
     `
     INSERT INTO songs
@@ -13,7 +24,7 @@ export async function create(name: string, youtubeLink: string, score: number) {
   );
 }
 
-export async function findById(id: number): Promise<Recommendation> {
+export async function findById(id: number): Promise<RecommendationDB> {
   const result = await connection.query(
     `
     SELECT * FROM songs WHERE id = $1
@@ -24,7 +35,7 @@ export async function findById(id: number): Promise<Recommendation> {
   return result.rows[0];
 }
 
-export async function incrementScore(id: number, increment: number) {
+export async function incrementScore(id: number, increment: number): Promise<QueryResult<any>> {
   return await connection.query(
     `
     UPDATE songs SET score = score + $1 WHERE id = $2

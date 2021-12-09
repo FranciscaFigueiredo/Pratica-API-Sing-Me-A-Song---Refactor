@@ -9,8 +9,9 @@ export async function saveRecommendation(name: string, youtubeLink: string) {
     return null;
   }
 
-  const initialScore = 0;
-  return await recommendationRepository.create(name, youtubeLink, initialScore);
+  const score = 0;
+  
+  return await recommendationRepository.create({ name, youtubeLink, score });
 }
 
 export async function upvoteRecommendation(id: number) {

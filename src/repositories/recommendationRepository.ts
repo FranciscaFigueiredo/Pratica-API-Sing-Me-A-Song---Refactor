@@ -1,10 +1,17 @@
 import connection from "../database";
 
+interface Recommendation {
+  id: number;
+  name: string;
+  youtubeLink: string;
+  score: number;
+}
+
 export async function create(name: string, youtubeLink: string, score: number) {
   await connection.query(
     `
-    INSERT INTO recommendations
-    (name, "youtubeLink", score)
+    INSERT INTO songs
+    (name, "youtube_link", score)
     VALUES
     ($1, $2, $3)
   `,
@@ -12,10 +19,10 @@ export async function create(name: string, youtubeLink: string, score: number) {
   );
 }
 
-export async function findById(id: number) {
+export async function findById(id: number): Promise<Recommendation> {
   const result = await connection.query(
     `
-    SELECT * FROM recommendations WHERE id = $1
+    SELECT * FROM songs WHERE id = $1
   `,
     [id]
   );
@@ -26,7 +33,7 @@ export async function findById(id: number) {
 export async function incrementScore(id: number, increment: number) {
   return await connection.query(
     `
-    UPDATE recommendations SET score = score + $1 WHERE id = $2
+    UPDATE songs SET score = score + $1 WHERE id = $2
   `,
     [increment, id]
   );
@@ -35,7 +42,7 @@ export async function incrementScore(id: number, increment: number) {
 export async function destroy(id: number) {
   return await connection.query(
     `
-    DELETE FROM recommendations WHERE id = $1
+    DELETE FROM songs WHERE id = $1
   `,
     [id]
   );
@@ -56,7 +63,7 @@ export async function findRecommendations(
     params.push(maxScore);
   }
 
-  let query = `SELECT * FROM recommendations WHERE ${where}`;
+  let query = `SELECT * FROM songs WHERE ${where}`;
 
   if (orderBy) {
     query += ` ORDER BY ${orderBy}`;
